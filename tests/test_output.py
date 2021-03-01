@@ -348,12 +348,12 @@ class TestFormatOptions:
         ]
     )
     def test_parse_format_options_errors(self, options_string, expected_error):
-        defaults = {
-            'foo': {
-                'bar': 1
-            }
-        }
         with pytest.raises(argparse.ArgumentTypeError, match=expected_error):
+            defaults = {
+                'foo': {
+                    'bar': 1
+                }
+            }
             parse_format_options(s=options_string, defaults=defaults)
 
     @pytest.mark.parametrize(

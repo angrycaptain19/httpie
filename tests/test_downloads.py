@@ -179,11 +179,11 @@ class TestDownloads:
             downloader._progress_reporter.join()
 
     def test_download_with_redirect_original_url_used_for_filename(self, httpbin):
-        # Redirect from `/redirect/1` to `/get`.
-        expected_filename = '1.json'
         orig_cwd = os.getcwd()
         with tempfile.TemporaryDirectory() as tmp_dirname:
             os.chdir(tmp_dirname)
+            # Redirect from `/redirect/1` to `/get`.
+            expected_filename = '1.json'
             try:
                 assert os.listdir('.') == []
                 http('--download', httpbin.url + '/redirect/1')
