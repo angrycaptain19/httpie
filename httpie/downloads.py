@@ -117,8 +117,8 @@ def filename_from_content_disposition(
     if filename:
         # Basic sanitation.
         filename = os.path.basename(filename).lstrip('.').strip()
-        if filename:
-            return filename
+    if filename:
+        return filename
 
 
 def filename_from_url(url: str, content_type: Optional[str]) -> str:

@@ -115,23 +115,24 @@ class HTTPieArgumentParser(argparse.ArgumentParser):
         }
 
     def _process_url(self):
-        if not URL_SCHEME_RE.match(self.args.url):
-            if os.path.basename(self.env.program_name) == 'https':
-                scheme = 'https://'
-            else:
-                scheme = self.args.default_scheme + '://'
+        if URL_SCHEME_RE.match(self.args.url):
+            return
+        if os.path.basename(self.env.program_name) == 'https':
+            scheme = 'https://'
+        else:
+            scheme = self.args.default_scheme + '://'
 
-            # See if we're using curl style shorthand for localhost (:3000/foo)
-            shorthand = re.match(r'^:(?!:)(\d*)(/?.*)$', self.args.url)
-            if shorthand:
-                port = shorthand.group(1)
-                rest = shorthand.group(2)
-                self.args.url = scheme + 'localhost'
-                if port:
-                    self.args.url += ':' + port
-                self.args.url += rest
-            else:
-                self.args.url = scheme + self.args.url
+        # See if we're using curl style shorthand for localhost (:3000/foo)
+        shorthand = re.match(r'^:(?!:)(\d*)(/?.*)$', self.args.url)
+        if shorthand:
+            port = shorthand.group(1)
+            rest = shorthand.group(2)
+            self.args.url = scheme + 'localhost'
+            if port:
+                self.args.url += ':' + port
+            self.args.url += rest
+        else:
+            self.args.url = scheme + self.args.url
 
     # noinspection PyShadowingBuiltins
     def _print_message(self, message, file=None):
@@ -430,9 +431,8 @@ class HTTPieArgumentParser(argparse.ArgumentParser):
             self.args.download = False
             self.args.download_resume = False
             return
-        if not self.args.download:
-            if self.args.download_resume:
-                self.error('--continue only works with --download')
+        if not self.args.download and self.args.download_resume:
+            self.error('--continue only works with --download')
         if self.args.download_resume and not (
                 self.args.download and self.args.output_file):
             self.error('--continue requires --output to be specified')
